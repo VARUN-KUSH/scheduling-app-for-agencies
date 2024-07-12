@@ -1,0 +1,176 @@
+/* html {
+	overflow: scroll;
+} */
+
+::-webkit-scrollbar {
+	width: 0px;
+	background: transparent; /* make scrollbar transparent */
+}
+.bigdashboard {
+	min-height: 100%;
+	display: grid;
+	font-family: Poppins;
+	line-height: 21px;
+	grid-template-columns: 1fr 1.3fr 2fr;
+	grid-template-rows: 1fr;
+	grid-template-areas: 'a b c';
+	overflow-y: hidden;
+}
+
+.activity {
+	grid-area: a;
+	background: linear-gradient(175.2deg, #063437 0%, rgba(0, 0, 0, 0) 101.53%);
+}
+.project {
+	grid-area: b;
+	background: linear-gradient(175.2deg, #270a1f 0%, rgba(0, 0, 0, 0) 101.53%);
+}
+.teamWork {
+	grid-area: c;
+	background: linear-gradient(175.2deg, #0c0a27 0%, rgba(0, 0, 0, 0) 101.53%);
+}
+.activity,
+.project,
+.teamWork {
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+}
+
+.topStatisticsBar {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	min-width: 80%;
+}
+.outertopStatisticsBar {
+	background: linear-gradient(360deg, rgba(0, 0, 0, 0.5) -37.09%, rgba(0, 0, 0, 0.21) 38.96%);
+	height: 100px;
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding-left: 38px;
+	margin-bottom: 10px;
+}
+
+.alignTeamContent {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding-left: 29px;
+}
+.alignProjectsContent {
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	padding-left: 19px;
+}
+
+.projectsHeading {
+	font-family: Poppins;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+	transform: translateY(-7px);
+	/* identical to box height */
+
+	/* display: flex;
+	align-items: flex-end; */
+	text-transform: capitalize;
+	cursor: pointer;
+	color: #f99de1;
+	line-height: 12px;
+    margin-bottom: 10px;
+}
+.projectHeading,
+.projectInputs {
+	opacity: 1;
+	font-weight: 500;
+	font-size: 14px;
+	font-family: Poppins;
+	color: #ffffff;
+}
+.projectInputs {
+	background: #ffffff63;
+    border-radius: 3px;
+    border: none;
+    width: 50%;
+    margin: 0 2px;
+    color: white;
+    padding-left: 5px;
+}
+.projectInputs:focus,.projectInputs:hover{
+	opacity:1 !important;
+	cursor:pointer;
+	border: none;
+	outline-width: 0px;
+}
+.projectInputs::-webkit-outer-spin-button,
+.projectInputs::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+input[type='number'] {
+	-moz-appearance: textfield;
+}
+.projects {
+	padding: 10px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+}
+.eachProject {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.rectangle {
+	width: 14px;
+	height: 14px;
+	border-width: 3px;
+	border-style: solid;
+	border-radius: 4px;
+	cursor: pointer;
+}
+.rectanglegreen {
+	border-color: #2ac555;
+}
+.rectangleRed {
+	border-color: #c52a2a;
+}
+.rectangleYellow {
+	border-color: #afc52a;
+}
+.rectanglewhite {
+	border-color: white;
+}
+.projectContainer,
+.outertopStatisticsBar {
+	min-width: 300px;
+}
+
+.colorPalette {
+	display: flex;
+	gap: 10px;
+	width: 110px;
+	height: 18px;
+	align-items: center;
+	border-radius: 5px;
+}
+.selectedActivity {
+	width: 5px;
+	height: 20px;
+	background-color: #14fa01;
+}
+
+.alignProjectsContent,
+.alignTeamContent {
+	margin-top: 32px;
+}
+.alignActivitiesContent {
+	margin-top: 36px;
+}
+
+table {
+	border: none;
+}

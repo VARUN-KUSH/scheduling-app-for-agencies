@@ -1,0 +1,224 @@
+* {
+	box-sizing: border-box;
+}
+
+.homebody {
+	margin-left: 30px;
+	margin-right: 30px;
+}
+.homebody .container-fluid {
+	padding-left: 11px;
+	padding-right: 11px;
+}
+.smallcontainer {
+	display: flex;
+	flex-direction: row;
+	margin-top: 24px;
+	align-items: center;
+}
+.smalldivs {
+	background: #51459f;
+	border-radius: 10px;
+	padding: 10px;
+	min-width: 40px;
+	min-height: 40px;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.dottedline {
+	border: 0.5px dashed #9da2ac;
+	color: transparent;
+}
+
+.smalltextdivs {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 21px;
+	/* identical to box height */
+	display: inline-flex;
+	text-transform: capitalize;
+
+	color: #9da2ac;
+}
+
+/* .col-4 {
+	width: 30% !important;
+} */
+.operationdiv {
+	margin-top: 14px;
+}
+
+.op-div-container {
+	padding: 4px;
+}
+
+.operationdiv1 {
+	background-color: #f17007;
+	border-radius: 14px;
+	padding: 16px;
+}
+.operationdiv1text1 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 25px;
+	line-height: 37px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+.operationdiv1text2 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 18px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+
+.teamworkdiv1 {
+	background: #f74539;
+	border-radius: 14px;
+	height: 230px;
+	padding: 16px;
+}
+
+.teamworkdiv1-parent {
+	padding: 8px 4px;
+}
+
+.teamworkdiv1text1 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 50px;
+	line-height: 75px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+.teamworkdiv1text2 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 18px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+.teamworkdiv2-parent {
+	padding: 8px 4px;
+}
+
+@media (max-width: 576px) {
+	/* .teamworkdiv2-container{
+        width: 100%;
+    } */
+	.teamworkdiv1 {
+		width: 100%;
+	}
+}
+.teamworkdiv2 {
+	background: #017fde;
+	border-radius: 10px;
+	/* width: 100px; */
+	height: 110px;
+	padding: 16px;
+}
+.teamworkdiv2text1 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 24px;
+	line-height: 36px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+.teamworkdiv2text2 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 10px;
+	line-height: 15px;
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+
+/*drive section css*/
+
+.drive {
+	margin-top: 14px;
+	padding-bottom: 30px;
+}
+
+.drive-div-container {
+	padding: 4px;
+}
+
+.driveDiv1 {
+	background-color: #ecaf02;
+	border-radius: 14px;
+	padding: 8px;
+}
+.driveDiv1text1 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 25px;
+	line-height: 37px;
+	align-items: center;
+	display: flex;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+.driveDiv1text2 {
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 18px;
+	text-align: center;
+	text-transform: capitalize;
+
+	color: #ffffff;
+}
+
+.arrowText {
+	margin-top: 16px;
+	font-family: Poppins;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 12px;
+	line-height: 18px;
+	/* identical to box height */
+
+	text-transform: capitalize;
+
+	color: #ffffff;
+
+	opacity: 0.75;
+}

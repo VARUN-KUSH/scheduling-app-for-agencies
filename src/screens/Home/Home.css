@@ -1,0 +1,76 @@
+.homeCard {
+	background: #26292f;
+	border-radius: 15px;
+	padding: 17px;
+	margin: 1.2rem -0.3rem;
+	display: flex;
+	box-sizing: border-box;
+	width: 95%;
+}
+.page {
+	display: flex;
+	justify-content: center;
+	padding: 1.3rem;
+}
+.homeCard-heading {
+	color: #fff;
+	font-size: 16px;
+
+	line-height: 27px;
+	letter-spacing: 1.4px;
+}
+.css-cnd76u-MuiPaper-root {
+	padding: 0 !important;
+	background-color: #181a1e !important;
+}
+.project-need {
+	box-sizing: border-box;
+
+	display: flex;
+	color: #9da2ac;
+	font-size: 14px;
+	align-items: center;
+	font-family: Poppins;
+	font-style: normal;
+	margin-top: 1rem;
+}
+.need-square {
+	width: 14px;
+	height: 14px;
+	border-radius: 4px;
+}
+.numbers {
+	margin-left: 1.3rem;
+	margin-right: 2rem;
+}
+.red-square {
+	border: 1.8px solid #e50202;
+}
+
+.yellow-square {
+	border: 1.8px solid #e8b000;
+}
+
+.green-square {
+	border: 1.8px solid #5fb924;
+}
+
+.white-square {
+	border: 1.8px solid #ffffff;
+}
+.homeCard-div1 {
+	background: #2e343d;
+	height: 50px;
+	width: 50px;
+	border-radius: 50%;
+	margin-right: 2rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #969ba5;
+}
+@media only screen and (max-width: 600px) {
+	.homeCard {
+		width: 100%;
+	}
+}
