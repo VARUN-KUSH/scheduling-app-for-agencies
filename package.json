@@ -40,10 +40,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm build:css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write \"**/*.{js,jsx,html,css}\""
+   
   },
   "eslintConfig": {
     "extends": [
@@ -67,8 +68,12 @@
     "fsevents": "^2.3.2"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.19",
     "chokidar": "^2.1.8",
-    "prettier": "^2.5.1"
+    "postcss": "^8.4.39",
+    "postcss-cli": "^11.0.0",
+    "prettier": "^2.5.1",
+    "tailwindcss": "^3.4.4"
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",

@@ -6,7 +6,7 @@ import ProjectsColumn from './ProjectsColumn';
 import ActivitiesColumn from './ActivitiesColumn';
 import moment from 'moment';
 import axios from 'axios';
-import {Helmet} from "react-helmet";
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
@@ -17,7 +17,7 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 
 	const [totalTickets, setTotalTickets] = useState(0);
 	const [completedTask, setCompletedTask] = useState(0);
-
+	const [maximizedColumn, setMaximizedColumn] = useState(null);
 	const localStorageData = localStorage.getItem('redwing_data');
 
 	const [allusers, setAllUsers] = useState(
@@ -31,9 +31,14 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 		localStorage.getItem('redwing_data') ? JSON.parse(localStorageData).projects : []
 	);
 
-	const scrollTop=()=>{
-		window.scrollTo({top:0,behaviour:'smooth'})
-	}
+	const scrollTop = () => {
+		window.scrollTo({ top: 0, behaviour: 'smooth' });
+	};
+
+	//handles minimizing and maximizing
+	const handleMaximizeClick = column => {
+		setMaximizedColumn(maximizedColumn === column ? null : column);
+	};
 
 	useEffect(() => {
 		if (allusers.users) {
@@ -41,7 +46,7 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 			const totalTasks = teamMembers.reduce((acc, user) => {
 				return acc + user.tasks_count;
 			}, 0);
-			if(totalTasks !== totalTickets){
+			if (totalTasks !== totalTickets) {
 				setTotalTickets(totalTasks);
 				setTopStatisticsCount(prev => {
 					return {
@@ -54,22 +59,22 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 	}, [allusers]);
 
 	useEffect(() => {
-		if(allusers.users) {
+		if (allusers.users) {
 			const teamMembers = allusers.users.filter(user => user.user_id !== 33629907);
-			const totalCompleteTask  = teamMembers.reduce((acc,user) => {
+			const totalCompleteTask = teamMembers.reduce((acc, user) => {
 				return acc + user.completed_todo;
-			},0);
-			if(totalCompleteTask !== completedTask){
+			}, 0);
+			if (totalCompleteTask !== completedTask) {
 				setCompletedTask(totalCompleteTask);
 				setTopStatisticsCount(prev => {
 					return {
 						...prev,
 						taskCompleted: completedTask
-					}
+					};
 				});
 			}
 		}
-	},[allusers]);
+	}, [allusers]);
 
 	const getTeamWorkData = () => {
 		// setLoading(true);
@@ -94,14 +99,14 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 			});
 	};
 
-	useEffect(()=>{
-		setTopStatisticsCount(()=>{
+	useEffect(() => {
+		setTopStatisticsCount(() => {
 			return {
 				...topStatisticsCount,
 				tasksToday: data.tickets_created_today
 			};
 		});
-	},[data]);
+	}, [data]);
 
 	const [topStatisticsCount, setTopStatisticsCount] = useState({
 		hoursOfWeek: 0,
@@ -124,13 +129,20 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 	return (
 		<div className={styles.bigdashboard}>
 			<Helmet>
-				<meta name="apple-mobile-web-app-capable" content="yes" />
+				<meta name='apple-mobile-web-app-capable' content='yes' />
 			</Helmet>
+			{/* first   coloumn*/}
 			<div className={styles.activity}>
 				<div className={styles.outertopStatisticsBar}>
 					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
-						<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
+						{topStatisticsCount.hoursOfWeek != 0 ? (
+							<>
+								<TopStatistics text={'Hours of work'} count={topStatisticsCount.hoursOfWeek} />
+								<TopStatistics text={'Completion'} count={topStatisticsCount.completion} />
+							</>
+						) : (
+							[' ']
+						)}
 					</div>
 				</div>
 				<div className={styles.alignActivitiesContent}>
@@ -141,39 +153,92 @@ const BigDashboard = ({ selectedProject, setSelectedProject, timer }) => {
 					/>
 				</div>
 			</div>
-			<div className={styles.project}>
-				<div className={styles.outertopStatisticsBar}>
-					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Worth Orders'} count={topStatisticsCount.worthOrders} />
+
+			{/* Second column */}
+			{(!maximizedColumn || maximizedColumn === 'project') && (
+				<div
+					className={`${styles.project} ${maximizedColumn === 'project' ? styles.maximized : ''}`}
+				>
+					<button onClick={() => handleMaximizeClick('project')}>
+						{maximizedColumn === 'project' ? 'Minimize' : 'Maximize'}
+					</button>
+					<div className={styles.outertopStatisticsBar}>
+						<div className={styles.topStatisticsBar}>
+							<TopStatistics text={'Worth Orders'} count={topStatisticsCount.worthOrders} />
+						</div>
+					</div>
+					<div className={styles.alignProjectsContent}>
+						<ProjectsColumn setTopStatisticsCount={setTopStatisticsCount} />
 					</div>
 				</div>
-				<div className={styles.alignProjectsContent}>
-					<ProjectsColumn setTopStatisticsCount={setTopStatisticsCount} />
-				</div>
-			</div>
-			<div className={styles.teamWork}>
-				<div className={styles.outertopStatisticsBar}>
-					<div className={styles.topStatisticsBar}>
-						<TopStatistics text={'Tasks Today'} count={topStatisticsCount.tasksToday} />
-						<TopStatistics text={'Team Load'} count={totalTickets} />
-						<TopStatistics text={'Completions'} count={completedTask} />
+			)}
+
+			{/* Third column */}
+			{(!maximizedColumn || maximizedColumn === 'teamWork') && (
+				<div
+					className={`${styles.teamWork}  ${
+						maximizedColumn === 'teamWork' ? styles.maximized : ''
+					}`}
+				>
+					<button onClick={() => handleMaximizeClick('teamWork')}>
+						{maximizedColumn === 'teamWork' ? 'Minimize' : 'Maximize'}
+					</button>
+					<div className={styles.outertopStatisticsBar}>
+						<div className={styles.topStatisticsBar}>
+							<TopStatistics text={'Tasks Today'} count={topStatisticsCount.tasksToday} />
+							<TopStatistics text={'Team Load'} count={totalTickets} />
+							<TopStatistics text={'Completions'} count={completedTask} />
+							<TopStatistics text={'Sleeping'} count={data.sleeping_tasks} />
+						</div>
+					</div>
+					<div className={styles.alignTeamContent}>
+						<TeamWork
+							isInverted={false}
+							screenIndex={2}
+							showTeamTabTop={false}
+							showTabComponent={false}
+							showActionButtons={false}
+						/>
+					</div>
+					<div>
+						<table className={styles.statusTable}>
+							<thead>
+								<tr>
+									<th className={styles.header}>Slowdowns</th>
+									<th className={styles.header}>Absents</th>
+									<th className={styles.header}>Idles</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td className={styles.slowdown}>Person A</td>
+									<td className={styles.absent}>Person D</td>
+									<td className={styles.idle}>Person F</td>
+								</tr>
+								<tr>
+									<td className={styles.slowdown}>Person B</td>
+									<td className={styles.absent}>Person E</td>
+									<td className={styles.idle}>Person G</td>
+								</tr>
+								<tr>
+									<td className={styles.slowdown}>Person C</td>
+									<td></td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
-				<div className={styles.alignTeamContent}>
-					<TeamWork
-						isInverted={false}
-						screenIndex={2}
-						showTeamTabTop={false}
-						showTabComponent={false}
-						showActionButtons={false}
-					/>
-				</div>
-			</div>
-			<div className="big-dashboard-footer" style={{margin:"1rem"}}>
-				<Link to='/homepage'onClick={scrollTop}>Go to Homepage</Link>
+			)}
+
+			<div className='big-dashboard-footer' style={{ margin: '1rem' }}>
+				<Link to='/homepage' onClick={scrollTop}>
+					Go to Homepage
+				</Link>
 			</div>
 		</div>
 	);
 };
 
 export default BigDashboard;
+

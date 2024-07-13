@@ -3,6 +3,7 @@ import GlobalStyle from 'globalStyles';
 import useData from 'hooks/use-data';
 import { AllDataContext } from 'context/AllDataContext';
 import { DraggingContext } from 'context/isDragging';
+
 // screens
 import Kanban from 'screens/Kanban/Kanban';
 import RapidEstimation from 'screens/RapidEstimation/RapidEstimation';
@@ -15,6 +16,7 @@ import TimeBar from 'components/TimeBar/TimeBar';
 import FocusMode from 'components/FocusMode/FocusMode';
 import BasecampLoginCallback from 'components/Login/BasecampLoginCallback';
 import TeamWork from 'screens/TeamWork/TeamWork';
+import Playground from 'screens/TeamWork/Playground'
 import BigDashboard from 'screens/BigDashboard';
 import Header from './components/Header/Header';
 
@@ -160,10 +162,14 @@ const App = () => {
 							tabValues={screenName}
 						/>
 					</Route>
+					<Route exact path='/segmentation'>
+						<Playground screenIndex={2} isInverted={isInverted} />
+					</Route>
 
 					<Route exact path='/team-work'>
 						<TeamWork screenIndex={2} isInverted={isInverted} />
 					</Route>
+					
 					<Route exact path='/drive'>
 						<Needs screenIndex={2} isInverted={isInverted} />
 					</Route>

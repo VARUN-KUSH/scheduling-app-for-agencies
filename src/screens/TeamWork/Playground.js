@@ -1,10 +1,20 @@
 import axios from 'axios';
-import './TeamWork.css';
+import './Playground.css';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import { pageTransitions, pageVariants } from 'animations';
-import { Container, TeamTabBottom, TeamTabTop, ModalBody, Projects } from './Style';
-import { Button, Container as MdContainer, Grid, Modal, Box,CardMedia, Card, CardContent, TextField } from '@material-ui/core';
+import { Container, TeamTabBottom, TeamTabTop, ModalBody, Projects } from './Playstyle';
+import {
+	Button,
+	Container as MdContainer,
+	Grid,
+	Modal,
+	Box,
+	CardMedia,
+	Card,
+	CardContent,
+	TextField
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { Typography } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -14,7 +24,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import TabComponent from 'components/TabComponent/TabComponent';
 import moment from 'moment';
-import useLongPress from '../../hooks/useLongPress'
+import useLongPress from '../../hooks/useLongPress';
 import { alertClasses } from '@mui/material';
 
 const token = localStorage.getItem('red_wing_token');
@@ -36,17 +46,16 @@ const deleteMemberStyle = {
 	bgcolor: '#353935',
 	border: '2px solid #000',
 	boxShadow: 24,
-	p: 4,
-  };
-  
+	p: 4
+};
 
-const TeamWork = ({
+const Playground = ({
 	isInverted,
 	showTeamTabTop = true,
 	showTabComponent = true,
 	showActionButtons = true
 }) => {
-	const [tabValue, setTabValue] = useState('Team');
+	const [tabValue, setTabValue] = useState('Default');
 	const localStorageData = localStorage.getItem('redwing_data');
 	const [data, setData] = useState(
 		localStorage.getItem('redwing_data') ? JSON.parse(localStorageData) : {}
@@ -55,6 +64,7 @@ const TeamWork = ({
 		localStorage.getItem('redwing_data') ? JSON.parse(localStorageData).projects : []
 	);
 	const [projects, setProjects] = useState([]);
+	const [sortedUsers, setSortedUsers] = useState([]);
 	const [users, setUsers] = useState([]);
 	const [projectId, setProjectId] = useState('');
 	const [openAddProjectModal, setOpenAddProjectModal] = useState(false);
@@ -62,14 +72,15 @@ const TeamWork = ({
 	const [loading, setLoading] = useState(false);
 	const [sortingOrder, setSortingOrder] = useState('DEC');
 	const [sortingColumn, setSortingColumn] = useState('tasks_count');
-	// const [sortingActivity, setSortingActivity] = useState('activity')
-	const [openDeleteModal,setOpenDeleteModal]=useState(false);
-	const [deleteMember,setDeleteMember] = useState({img:'',name:'', user_id:''})
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [deleteMember, setDeleteMember] = useState({ img: '', name: '', user_id: '' });
 
 	useEffect(() => {
 		getTeamWorkData();
-		setInterval(async () => getTeamWorkData(), 120000);
-	}, []);
+		setInterval(async () => {
+			getTeamWorkData();
+		}, 120000);
+	}, [tabValue]);
 
 	const sorting = (col, sortingOrder1) => {
 		if (col === 'tasks_count' || col === 'active_count') {
@@ -118,15 +129,18 @@ const TeamWork = ({
 
 				setSortingOrder('ASC');
 			}
-		} else if(col === 'activity') {
+		} else if (col === 'activity') {
 			if (sortingOrder1 === 'ASC') {
-				const sorted = [...users].sort((a, b) => (a['completed_todo'] < b['completed_todo'] ? 1 : -1));
+				const sorted = [...users].sort((a, b) =>
+					a['completed_todo'] < b['completed_todo'] ? 1 : -1
+				);
 				setUsers(sorted);
 
 				setSortingOrder('DEC');
-
 			} else if (sortingOrder1 === 'DEC') {
-				const sorted = [...users].sort((a, b) => (a['completed_todo'] > b['completed_todo'] ? 1 : -1));
+				const sorted = [...users].sort((a, b) =>
+					a['completed_todo'] > b['completed_todo'] ? 1 : -1
+				);
 				setUsers(sorted);
 
 				setSortingOrder('ASC');
@@ -189,8 +203,15 @@ const TeamWork = ({
 			setUsers(users);
 			setSortingOrder('DEC');
 			setSortingColumn('tasks_count');
+			if (tabValue == 'Performance') {
+				const sorted = [...users].sort((a, b) =>
+					a['completed_todo'] < b['completed_todo'] ? 1 : -1
+				);
+				setUsers(sorted);
+				setSortedUsers(sorted); // Set the sorting column
+			}
 		}
-	}, [data]);
+	}, [data, tabValue]);
 
 	useEffect(() => {
 		var projects = [];
@@ -200,6 +221,26 @@ const TeamWork = ({
 		setProjects(projects);
 		console.log(projects);
 	}, [projectData]);
+
+	const team5Plus = sortedUsers.filter(user => user.completed_todo > 5);
+	const team1To5 = sortedUsers.filter(user => user.completed_todo >= 1 && user.completed_todo <= 5);
+	const team0 = sortedUsers.filter(user => user.completed_todo === 0);
+	const renderTable = (team, teamName) => (
+		<table className='status-table'>
+			<thead>
+				<tr>
+					<th>{teamName}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{team.map((user, key) => (
+					<tr key={key}>
+						<td>{user.name}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	);
 
 	const handleRefreshUserList = () => {
 		setLoading(true);
@@ -227,14 +268,14 @@ const TeamWork = ({
 			});
 	};
 
-	const onSVGClick = () => {
-		if (tabValue === 'Team') {
-			setTabValue('Projects');
-		}
-		if (tabValue === 'Projects') {
-			setTabValue('Team');
-		}
-	};
+	// const onSVGClick = () => {
+	// 	if (tabValue === 'Team') {
+	// 		setTabValue('Playground');
+	// 	}
+	// 	if (tabValue === 'Playground') {
+	// 		setTabValue('Team');
+	// 	}
+	// };
 
 	const handleOpenProjectModal = () => {
 		setOpenAddProjectModal(true);
@@ -279,14 +320,9 @@ const TeamWork = ({
 		}
 	};
 
-
-	const handleCloseDeleteModal = ()=>{
+	const handleCloseDeleteModal = () => {
 		setOpenDeleteModal(false);
-	}
-
-	
-	
-	
+	};
 
 	return (
 		<>
@@ -296,60 +332,53 @@ const TeamWork = ({
 				exit={isInverted ? 'outRight' : 'outLeft'}
 				variants={pageVariants}
 				transition={pageTransitions}
-				style={{ width: '100%', height: '100%'}}
+				style={{ width: '100%', height: '100%' }}
 			>
 				<Container>
 					{showTabComponent && (
 						<TabComponent
 							active={tabValue}
 							setActive={setTabValue}
-							tabList={['Team', 'Projects']}
+							tabList={['Default', 'Playground', 'Project', 'Performance']}
 							counts={{ Team: users?.length }}
 						/>
 					)}
-					{tabValue === 'Team' && (
-						<>
-							{showTeamTabTop && (
-								<TeamTabTop>
-									<table style={{width: '100%'}}>
-										<tr align='center'>
-											<th align='center'>Today</th>
-											<th align='center'>Average</th>
-											<th align='center'>Sleeping</th>
-											<th align='center'>Unassigned</th>
-										</tr>
-										<tr style={{ alignItems: 'center', margin: 'auto' }}>
-											<td align='center'>{data.tickets_created_today}</td>
-											<td>{data.average}</td>
-											<td>
-												<a
-													href='https://redwing.puneetpugalia.com/pages/sleeping_task.php'
-													target='_blank'
-													rel='noreferrer'
-													style={{ color: 'white' }}
-												>
-													{data.sleeping_tasks}
+					{tabValue === 'Default' && (
+						<TeamTabBottom>
+							<table cellspacing='0' cellpadding='0'>
+								<thead>
+									<tr>
+										<th
+											onClick={e => {
+												e.preventDefault();
+												setSortingColumn('name');
+												if (sortingOrder === 'ASC') {
+													sorting('name', 'ASC');
+												} else {
+													sorting('name', 'DEC');
+												}
+											}}
+											style={{
+												transform: 'translateX(-6px)',
+												fontSize: '14px',
+												lineHeight: '21px',
+												fontFamily: 'Poppins',
+												fontWeight: '500',
+												width: '1%',
+												'white-space': 'nowrap'
+											}}
+										>
+											{users.length} Team Members
+											{sortingColumn === 'name' ? (
+												<a href='/' style={{ color: 'white', marginLeft: '2px' }}>
+													{sortingOrder === 'ASC' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
 												</a>
-											</td>
-											<td>
-												<a
-													href='https://redwing.puneetpugalia.com/pages/unassigned_task.php'
-													target='_blank'
-													rel='noreferrer'
-													style={{ color: 'white' }}
-												>
-													{data.unassigned_tasks}
-												</a>
-											</td>
-										</tr>
-									</table>
-								</TeamTabTop>
-							)}
-							<TeamTabBottom>
-								<table cellspacing="0" cellpadding="0">
-									<thead>
-										<tr>
-											<th
+											) : (
+												''
+											)}
+										</th>
+
+										{/* <th 
 												onClick={e => {
 													e.preventDefault();
 													setSortingColumn('name');
@@ -357,36 +386,6 @@ const TeamWork = ({
 														sorting('name', 'ASC');
 													} else {
 														sorting('name', 'DEC');
-													}
-												}}
-												style={{
-													transform: 'translateX(-6px)',
-													fontSize: '14px',
-													lineHeight: '21px',
-													fontFamily: 'Poppins',
-													fontWeight: '500',
-													width: '1%',
-													'white-space': 'nowrap'
-												}}
-											>
-												{users.length} Team Members
-												{sortingColumn === 'name' ? (
-													<a href='/' style={{ color: 'white', marginLeft: '2px' }}>
-														{sortingOrder === 'ASC' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
-													</a>
-												) : (
-													''
-												)}
-											</th>
-
-											<th 
-												onClick={e => {
-													e.preventDefault();
-													setSortingColumn('activity');
-													if (sortingOrder === 'ASC') {
-														sorting('activity', 'ASC');
-													} else {
-														sorting('activity', 'DEC');
 													}
 												}}
 
@@ -403,16 +402,16 @@ const TeamWork = ({
 												}}
 											>
 												Activity
-												{sortingColumn === 'activity' ? (
+												{sortingColumn === 'tasks_count' ? (
 													<a style={{ color: 'white', marginLeft: '2px' }}>
 														{sortingOrder === 'ASC' ? <ArrowUpwardIcon style={{position:'relative',top:"2px"}} /> : <ArrowDownwardIcon style={{position:'relative',top:"2px"}} />}
 													</a>
 												) : (
 													''
 												)}{' '}
-											</th>
+											</th> */}
 
-											<th
+										{/* <th
 												onClick={e => {
 													e.preventDefault();
 													setSortingColumn('tasks_count');
@@ -433,7 +432,7 @@ const TeamWork = ({
 													'white-space': 'nowrap'
 												}}
 											>
-												Tasks
+												Team
 												{sortingColumn === 'tasks_count' ? (
 													<a style={{ color: 'white', marginLeft: '2px' }} href='/'>
 														{sortingOrder === 'ASC' ? <ArrowUpwardIcon style={{position:'relative',top:"2px"}} /> : <ArrowDownwardIcon style={{position:'relative',top:"2px"}} />}
@@ -441,8 +440,9 @@ const TeamWork = ({
 												) : (
 													''
 												)}{' '}
-											</th>
-											{/* <th
+											</th> */}
+
+										{/* <th
 												onClick={e => {
 													e.preventDefault();
 													setSortingColumn('active_count');
@@ -470,7 +470,7 @@ const TeamWork = ({
 													''
 												)}
 											</th> */}
-											<th
+										{/* <th
 												onClick={e => {
 													e.preventDefault();
 													setSortingColumn('project_ids');
@@ -491,7 +491,7 @@ const TeamWork = ({
 													'white-space': 'nowrap'
 												}}
 											>
-												Projects
+												
 												{sortingColumn === 'project_ids' ? (
 													<a style={{ color: 'white', marginLeft: '2px' }} href='/'>
 														{sortingOrder === 'ASC' ? <ArrowUpwardIcon style={{position:'relative',top:"2px"}} /> : <ArrowDownwardIcon style={{position:'relative',top:"2px"}} />}
@@ -499,99 +499,96 @@ const TeamWork = ({
 												) : (
 													''
 												)}
-											</th>
-										</tr>
-									</thead>
-									<tbody>
-										{users
-											? users.map((user, key) => {
-												console.log("users activity count", user)
+											</th> */}
+									</tr>
+								</thead>
+								<tbody>
+									{users
+										? users.map((user, key) => {
+												console.log('users activity count', users.tasks_count);
 												return (
 													<TableRow
 														key={key}
 														img={user.avatar}
-														user_id={user.user_id}
-														tasks={user.tasks_count}
+														// user_id={user.user_id}
+														// tasks={user.tasks_count}
 														name={user.name}
 														active={user.active_count}
-														active_todo={user.active_todo_count}
+														// active_todo={user.active_todo_count}
 														projects={user.project_ids}
-														completed_todo={user.completed_todo}
+														// completed_todo={user.completed_todo}
 														last_active_at={user.last_active_at}
 														projectsdata={projects}
 														data={data.users}
-														getTeamWorkData={getTeamWorkData}	
-														setLoading={setLoading}				
+														getTeamWorkData={getTeamWorkData}
+														setLoading={setLoading}
 													/>
 												);
-											})
-											: ''}
-									</tbody>
-								</table>
-								{showActionButtons && (
-									<MdContainer maxWidth='md'>
-										{token && token !== 'undefined' && new Date(token_expiry_date) > new Date() && (
-											<Grid container spacing={3} direction='row' justifyContent='center'>
-												<Grid item>
-													<Button
-														variant='contained'
-														color='primary'
-														onClick={handleOpenProjectModal}
-													>
-														Add New Project
-													</Button>
-												</Grid>
-												<Grid item>
-													<Button
-														variant='contained'
-														onClick={handleRefreshUserList}
-														color='primary'
-													>
-														Refresh User List
-													</Button>
-												</Grid>
+										  })
+										: ''}
+								</tbody>
+							</table>
+							{showActionButtons && (
+								<MdContainer maxWidth='md'>
+									{token && token !== 'undefined' && new Date(token_expiry_date) > new Date() && (
+										<Grid container spacing={3} direction='row' justifyContent='center'>
+											<Grid item>
+												<Button
+													variant='contained'
+													color='primary'
+													onClick={handleOpenProjectModal}
+												>
+													Add New Project
+												</Button>
 											</Grid>
-										)}
-										{(!token ||
-											token === 'undefined' ||
-											new Date(token_expiry_date) <= new Date()) && (
-												<Grid container spacing={3} direction='row' justifyContent='center'>
-													<Grid item>
-														<a href='https://launchpad.37signals.com/authorization/new?type=web_server&client_id=7d03697adc886996a673634b89d51d8febb29979&redirect_uri=https://touch-dashborad.herokuapp.com/auth/callback'>
-															<Button variant='contained' color='primary'>
-																Login to Basecamp
-															</Button>
-														</a>
-													</Grid>
-												</Grid>
-											)}
-									</MdContainer>
-								)}
-							</TeamTabBottom>
-						</>
+											<Grid item>
+												<Button variant='contained' onClick={handleRefreshUserList} color='primary'>
+													Refresh User List
+												</Button>
+											</Grid>
+										</Grid>
+									)}
+									{(!token ||
+										token === 'undefined' ||
+										new Date(token_expiry_date) <= new Date()) && (
+										<Grid container spacing={3} direction='row' justifyContent='center'>
+											<Grid item>
+												<a href='https://launchpad.37signals.com/authorization/new?type=web_server&client_id=7d03697adc886996a673634b89d51d8febb29979&redirect_uri=https://touch-dashborad.herokuapp.com/auth/callback'>
+													<Button variant='contained' color='primary'>
+														Login to Basecamp
+													</Button>
+												</a>
+											</Grid>
+										</Grid>
+									)}
+								</MdContainer>
+							)}
+						</TeamTabBottom>
 					)}
-					{tabValue === 'Projects' && (
+
+					{tabValue === 'Project' && (
 						<Projects>
-							<h2>Projects</h2>
+							{/* <h2>Projects</h2> */}
 							<table>
 								<thead>
 									<tr>
-										<th>Projects</th>
-										<th style={{ textAlign: 'center' }}>Tasks Today</th>
+										<th>Multitasking table</th>
+										<th>Specific Project</th>
+										<th>idle</th>
 									</tr>
 								</thead>
-								<tbody>
+								{/* <tbody>
 									{projects
 										? projects.map((project, key) => {
-											return (
-												<tr>
-													<td>{project.name}</td>
-													<td>{project.todos_created_today_count}</td>
-												</tr>
-											);
-										})
+												return (
+													<tr>
+														<td>{project.name}</td>
+														<td>{project.todos_created_today_count}</td>
+													</tr>
+												);
+										  })
 										: ''}
-								</tbody>
+								</tbody> */}
 							</table>
 							<MdContainer maxWidth='md'>
 								{token && token !== 'undefined' && new Date(token_expiry_date) > new Date() && (
@@ -608,7 +605,7 @@ const TeamWork = ({
 										</Grid>
 									</Grid>
 								)}
-								{(!token || token === 'undefined' || new Date(token_expiry_date) <= new Date()) && (
+								{/* {(!token || token === 'undefined' || new Date(token_expiry_date) <= new Date()) && (
 									<Grid container spacing={3} direction='row' justifyContent='center'>
 										<Grid item>
 											<a href='https://launchpad.37signals.com/authorization/new?type=web_server&client_id=7d03697adc886996a673634b89d51d8febb29979&redirect_uri=https://touch-dashborad.herokuapp.com/auth/callback'>
@@ -618,9 +615,190 @@ const TeamWork = ({
 											</a>
 										</Grid>
 									</Grid>
-								)}
+								)} */}
 							</MdContainer>
 						</Projects>
+					)}
+
+					{tabValue == 'Playground' && (
+						<TeamTabBottom>
+						<table cellspacing="0" cellpadding="0">
+							<thead>
+								<tr>
+									<th
+										onClick={e => {
+											e.preventDefault();
+											setSortingColumn('name');
+											if (sortingOrder === 'ASC') {
+												sorting('name', 'ASC');
+											} else {
+												sorting('name', 'DEC');
+											}
+										}}
+										style={{
+											transform: 'translateX(-6px)',
+											fontSize: '14px',
+											lineHeight: '21px',
+											fontFamily: 'Poppins',
+											fontWeight: '500',
+											width: '1%',
+											'white-space': 'nowrap'
+										}}
+									>
+										Red Wing
+										{sortingColumn === 'name' ? (
+											<a href='/' style={{ color: 'white', marginLeft: '2px' }}>
+												{sortingOrder === 'ASC' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+											</a>
+										) : (
+											''
+										)}
+									</th>
+									<th
+										onClick={e => {
+											e.preventDefault();
+											setSortingColumn('name');
+											if (sortingOrder === 'ASC') {
+												sorting('name', 'ASC');
+											} else {
+												sorting('name', 'DEC');
+											}
+										}}
+										style={{
+											transform: 'translateX(-6px)',
+											fontSize: '14px',
+											lineHeight: '21px',
+											fontFamily: 'Poppins',
+											fontWeight: '500',
+											width: '1%',
+											'white-space': 'nowrap'
+										}}
+									>
+										Client Projects
+										{sortingColumn === 'name' ? (
+											<a href='/' style={{ color: 'white', marginLeft: '2px' }}>
+												{sortingOrder === 'ASC' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+											</a>
+										) : (
+											''
+										)}
+								
+									</th>
+									
+								</tr>
+							</thead>
+							<tbody>
+										{users
+											? users.map((user, key) => {
+												console.log("users activity count", user)
+												return (
+													<TableRow
+														key={key}
+														img={user.avatar}
+														// user_id={user.user_id}
+														// tasks={user.tasks_count}
+														name={user.name}
+														active={user.active_count}
+														// active_todo={user.active_todo_count}
+														projects={user.project_ids}
+														// completed_todo={user.completed_todo}
+														last_active_at={user.last_active_at}
+														projectsdata={projects}
+														data={data.users}
+														getTeamWorkData={getTeamWorkData}	
+														setLoading={setLoading}				
+													/>
+												);
+											})
+											: ''}
+									</tbody>
+								</table>
+							</TeamTabBottom>
+					)}
+
+					{tabValue == 'Performance' && (
+						<TeamTabBottom>
+							{/* <table cellspacing='0' cellpadding='0'>
+								<thead>
+									<tr>
+										<th
+											onClick={e => {
+												e.preventDefault();
+												setSortingColumn('name');
+												if (sortingOrder === 'ASC') {
+													sorting('name', 'ASC');
+												} else {
+													sorting('name', 'DEC');
+												}
+											}}
+											style={{
+												transform: 'translateX(-6px)',
+												fontSize: '14px',
+												lineHeight: '21px',
+												fontFamily: 'Poppins',
+												fontWeight: '500',
+												width: '1%',
+												'white-space': 'nowrap'
+											}}
+										>
+											{users.length} Team Members
+											{sortingColumn === 'name' ? (
+												<a href='/' style={{ color: 'white', marginLeft: '2px' }}>
+													{sortingOrder === 'ASC' ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
+												</a>
+											) : (
+												''
+											)}
+										</th>
+
+										<th
+											style={{
+												textAlign: 'left',
+												position: 'relative',
+												right: '-30px',
+												paddingRight: '5rem',
+												fontSize: '14px',
+												lineHeight: '21px',
+												fontFamily: 'Poppins',
+												fontWeight: '500',
+												width: 'max-content'
+											}}
+										>
+											Activity
+											{sortingColumn === 'activity' ? (
+												<a style={{ color: 'white', marginLeft: '2px' }}>
+													{sortingOrder === 'DEC' ? (
+														<ArrowUpwardIcon style={{ position: 'relative', top: '2px' }} />
+													) : (
+														<ArrowDownwardIcon style={{ position: 'relative', top: '2px' }} />
+													)}
+												</a>
+											) : (
+												''
+											)}{' '}
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{users
+										? users.map((user, key) => {
+												console.log('users activity count', user);
+												return (
+													
+												);
+										  })
+										: ''}
+								</tbody>
+							</table> */}
+
+							<>
+								<div className='tables-container'>
+									{renderTable(team5Plus, 'Team 5+')}
+									{renderTable(team1To5, 'Team 1-5')}
+									{renderTable(team0, 'Team 0')}
+								</div>
+							</>
+						</TeamTabBottom>
 					)}
 				</Container>
 				{/* Modal for deleting team member */}
@@ -717,29 +895,28 @@ const TeamWork = ({
 };
 
 const TableRow = props => {
-
-	const getProjectname=(projectid)=>{
-		for(let i=0;i<props.projectsdata.length;i++){
-			if(props.projectsdata[i].project_id===projectid){
-				let c=getProjectCount(projectid,props.user_id)
-				let s=props.projectsdata[i].name;
+	const getProjectname = projectid => {
+		for (let i = 0; i < props.projectsdata.length; i++) {
+			if (props.projectsdata[i].project_id === projectid) {
+				let c = getProjectCount(projectid, props.user_id);
+				let s = props.projectsdata[i].name;
 				// if(s.length>13){
 				// 	s=s.slice(0,12)+'...';
 				// }
-				return s+' ('+c+')';
+				return s + ' (' + c + ')';
 			}
 		}
-	}
-	const getProjectCount=(projectid,userid)=>{
+	};
+	const getProjectCount = (projectid, userid) => {
 		console.log(props.data);
-		for(let i=0;i<props.data.length;i++){
-			if(props.data[i].user_id===userid){
+		for (let i = 0; i < props.data.length; i++) {
+			if (props.data[i].user_id === userid) {
 				return props.data[i]?.projects[projectid]?.count;
 			}
 		}
-	}
-	const handleDeleteMember = (user_id)=>{
-		console.log(user_id)
+	};
+	const handleDeleteMember = user_id => {
+		console.log(user_id);
 		axios
 			.post(
 				`${process.env.REACT_APP_API_URL}/pages/delete_user.php`,
@@ -759,54 +936,57 @@ const TableRow = props => {
 					alert('Something went wrong');
 					console.log(res.data);
 				}
-				props.getTeamWorkData()
+				props.getTeamWorkData();
 				props.setLoading(false);
 			})
 			.catch(error => {
 				console.error(error);
 				props.setLoading(false);
 			});
-	}
+	};
 
 	const onAvatarLongPress = () => {
 		// props.setDeleteMember({img:props.img, name:props.name, user_id:props.user_id})
-        // props.setOpenDeleteModal(true)
-		if(window.confirm("Do you want to delete this user?")){
-			handleDeleteMember(props.user_id)
+		// props.setOpenDeleteModal(true)
+		if (window.confirm('Do you want to delete this user?')) {
+			handleDeleteMember(props.user_id);
 		}
-		
-    };
+	};
 
-    const onAvatarClick = () => {
-        console.log('click is triggered')
-    }
+	const onAvatarClick = () => {
+		console.log('click is triggered');
+	};
 
 	const defaultOptions = {
-        shouldPreventDefault: true,
-        delay: 500,
-    };
-	const longPressAvatarEvent = useLongPress(onAvatarLongPress, onAvatarClick, defaultOptions)
-	console.log(parseInt(props.active.split('(')[0])-props.completed_todo)
-	console.log(props.active)
+		shouldPreventDefault: true,
+		delay: 500
+	};
+	const longPressAvatarEvent = useLongPress(onAvatarLongPress, onAvatarClick, defaultOptions);
+	console.log(parseInt(props.active.split('(')[0]) - props.completed_todo);
+	console.log(props.active);
 	return (
 		<tr style={{ marginTop: '0', paddingTop: '0' }}>
 			<td style={{ fontSize: '14px' }}>
 				<Grid container spacing={2}>
-					<Grid  item xs={2} sm={1} style={{ transform: 'translateY(-2px)' }}>
-						<img {...longPressAvatarEvent} src={props.img} alt='profile' style={{ width: '24px', height: '24px' }}></img>
+					<Grid item xs={2} sm={1} style={{ transform: 'translateY(-2px)' }}>
+						<img
+							{...longPressAvatarEvent}
+							src={props.img}
+							alt='profile'
+							style={{ width: '24px', height: '24px' }}
+						></img>
 					</Grid>
+
 					<Grid item xs={8} sm={10} style={{ fontSize: '14px' }}>
 						<a
 							href={`https://3.basecamp.com/4954106/reports/users/progress/${props.user_id}`}
 							style={{
-								color: 
-									props.name === "Kajal Patel" 
-										? 'white' 
-										: (props.active_todo === 0 
-											? 'red' 
-											: (moment().diff(moment(props.last_active_at), 'hours') >= 3 
-												? '#EDFC45' 
-												: 'white')),
+								color:
+									props.active_todo === 0
+										? 'red'
+										: moment().diff(moment(props.last_active_at), 'hours') >= 3
+										? '#EDFC45'
+										: 'white',
 								paddingLeft: '2rem',
 								fontSize: '14px'
 							}}
@@ -819,109 +999,111 @@ const TableRow = props => {
 				</Grid>
 			</td>
 			<td style={{ transform: 'translate(0, -3px)', fontSize: '14px' }}>
-				<div style={{display: 'flex', justifyContent: 'flex-start',marginLeft:"30px"}}>
-				{props.completed_todo && parseInt(props.completed_todo) !== 0
-					? [...Array(props.completed_todo)]?.map((count, key) => {
-						if (key !== 1 && key !== 0 && (key + 1) % 5 === 0) {
-							return (
-								<span
-									style={{
-										marginRight: '5px',
-										fontSize: '14px'
-									}}
-									key={key}
-								>
-									<svg
-										width='16'
-										height='13'
-										viewBox='0 0 16 13'
-										fill='none'
-										xmlns='http://www.w3.org/2000/svg'
+				<div style={{ display: 'flex', justifyContent: 'flex-start', marginLeft: '30px' }}>
+					{props.completed_todo && parseInt(props.completed_todo) !== 0
+						? [...Array(props.completed_todo)]?.map((count, key) => {
+								console.log(count);
+								if (key !== 1 && key !== 0 && (key + 1) % 5 === 0) {
+									return (
+										<span
+											style={{
+												marginRight: '5px',
+												fontSize: '14px'
+											}}
+											key={key}
+										>
+											<svg
+												width='16'
+												height='13'
+												viewBox='0 0 16 13'
+												fill='none'
+												xmlns='http://www.w3.org/2000/svg'
+											>
+												<path
+													d='M13.2982 1.2859C13.5588 1.0378 13.9056 0.900638 14.2654 0.90336C14.6252 0.906083 14.9699 1.04848 15.2267 1.3005C15.4835 1.55252 15.6324 1.89445 15.6419 2.25414C15.6514 2.61384 15.5208 2.96316 15.2777 3.2284L7.89621 12.4599C7.76928 12.5966 7.61609 12.7063 7.44579 12.7824C7.2755 12.8586 7.09159 12.8996 6.90508 12.9031C6.71856 12.9065 6.53326 12.8723 6.36026 12.8025C6.18726 12.7327 6.03012 12.6288 5.89822 12.4969L1.00313 7.60178C0.866812 7.47476 0.757474 7.32158 0.681639 7.15138C0.605804 6.98118 0.565026 6.79745 0.561739 6.61115C0.558452 6.42485 0.592723 6.2398 0.662507 6.06703C0.73229 5.89427 0.836158 5.73732 0.967912 5.60557C1.09967 5.47381 1.25661 5.36995 1.42938 5.30016C1.60214 5.23038 1.7872 5.19611 1.9735 5.1994C2.1598 5.20268 2.34352 5.24346 2.51372 5.3193C2.68392 5.39513 2.8371 5.50447 2.96413 5.64079L6.83801 9.51283L13.263 1.3266C13.2746 1.31236 13.287 1.29877 13.3 1.2859H13.2982Z'
+													fill='#14FF00'
+												/>
+											</svg>
+											<br />
+										</span>
+									);
+								}
+								return (
+									<span
+										style={{
+											marginRight: '5px',
+											fontSize: '14px'
+										}}
+										key={key}
 									>
-										<path
-											d='M13.2982 1.2859C13.5588 1.0378 13.9056 0.900638 14.2654 0.90336C14.6252 0.906083 14.9699 1.04848 15.2267 1.3005C15.4835 1.55252 15.6324 1.89445 15.6419 2.25414C15.6514 2.61384 15.5208 2.96316 15.2777 3.2284L7.89621 12.4599C7.76928 12.5966 7.61609 12.7063 7.44579 12.7824C7.2755 12.8586 7.09159 12.8996 6.90508 12.9031C6.71856 12.9065 6.53326 12.8723 6.36026 12.8025C6.18726 12.7327 6.03012 12.6288 5.89822 12.4969L1.00313 7.60178C0.866812 7.47476 0.757474 7.32158 0.681639 7.15138C0.605804 6.98118 0.565026 6.79745 0.561739 6.61115C0.558452 6.42485 0.592723 6.2398 0.662507 6.06703C0.73229 5.89427 0.836158 5.73732 0.967912 5.60557C1.09967 5.47381 1.25661 5.36995 1.42938 5.30016C1.60214 5.23038 1.7872 5.19611 1.9735 5.1994C2.1598 5.20268 2.34352 5.24346 2.51372 5.3193C2.68392 5.39513 2.8371 5.50447 2.96413 5.64079L6.83801 9.51283L13.263 1.3266C13.2746 1.31236 13.287 1.29877 13.3 1.2859H13.2982Z'
-											fill='#14FF00'
-										/>
-									</svg>
-									<br />
-								</span>
-							);
-						}
-						return (
-							<span
-								style={{
-									marginRight: '5px',
-									fontSize: '14px'
-								}}
-								key={key}
-							>
-								<svg
-									width='16'
-									height='13'
-									viewBox='0 0 16 13'
-									fill='none'
-									xmlns='http://www.w3.org/2000/svg'
-								>
-									<path
-										d='M13.2982 1.2859C13.5588 1.0378 13.9056 0.900638 14.2654 0.90336C14.6252 0.906083 14.9699 1.04848 15.2267 1.3005C15.4835 1.55252 15.6324 1.89445 15.6419 2.25414C15.6514 2.61384 15.5208 2.96316 15.2777 3.2284L7.89621 12.4599C7.76928 12.5966 7.61609 12.7063 7.44579 12.7824C7.2755 12.8586 7.09159 12.8996 6.90508 12.9031C6.71856 12.9065 6.53326 12.8723 6.36026 12.8025C6.18726 12.7327 6.03012 12.6288 5.89822 12.4969L1.00313 7.60178C0.866812 7.47476 0.757474 7.32158 0.681639 7.15138C0.605804 6.98118 0.565026 6.79745 0.561739 6.61115C0.558452 6.42485 0.592723 6.2398 0.662507 6.06703C0.73229 5.89427 0.836158 5.73732 0.967912 5.60557C1.09967 5.47381 1.25661 5.36995 1.42938 5.30016C1.60214 5.23038 1.7872 5.19611 1.9735 5.1994C2.1598 5.20268 2.34352 5.24346 2.51372 5.3193C2.68392 5.39513 2.8371 5.50447 2.96413 5.64079L6.83801 9.51283L13.263 1.3266C13.2746 1.31236 13.287 1.29877 13.3 1.2859H13.2982Z'
-										fill='#14FF00'
-									/>
-								</svg>
-							</span>
-						);
-					})
-				
-					: ''}
-					
-				<span style={{ marginLeft: '2rem' }}></span>
-				{props.active && parseInt(props.active.split('(')[0]) !== 0
-					? [
-						...Array(
-							(parseInt(props.active.split('(')[0])) - props.completed_todo <=0 
-								? 0
-								: (parseInt(props.active.split('(')[0])) - props.completed_todo>0
-								?(parseInt(props.active.split('(')[0])) - props.completed_todo:
-								0
-								
-						)
-					]?.map((count, key) => {
-						return (
-							<span style={{ marginRight: '5px', fontSize: '14px' }}>
-								<svg
-									width='7'
-									height='7'
-									viewBox='0 0 7 7'
-									fill='none'
-									xmlns='http://www.w3.org/2000/svg'
-									style={{ fontSize: '14px', transform: 'translateY(-40%)' }}
-									>
-									<circle cx='3.58691' cy='3.90332' r='3' fill='#666666' />
-								</svg>
-							</span>
-									
-						);
-					})
-					: ''}
+										<svg
+											width='16'
+											height='13'
+											viewBox='0 0 16 13'
+											fill='none'
+											xmlns='http://www.w3.org/2000/svg'
+										>
+											<path
+												d='M13.2982 1.2859C13.5588 1.0378 13.9056 0.900638 14.2654 0.90336C14.6252 0.906083 14.9699 1.04848 15.2267 1.3005C15.4835 1.55252 15.6324 1.89445 15.6419 2.25414C15.6514 2.61384 15.5208 2.96316 15.2777 3.2284L7.89621 12.4599C7.76928 12.5966 7.61609 12.7063 7.44579 12.7824C7.2755 12.8586 7.09159 12.8996 6.90508 12.9031C6.71856 12.9065 6.53326 12.8723 6.36026 12.8025C6.18726 12.7327 6.03012 12.6288 5.89822 12.4969L1.00313 7.60178C0.866812 7.47476 0.757474 7.32158 0.681639 7.15138C0.605804 6.98118 0.565026 6.79745 0.561739 6.61115C0.558452 6.42485 0.592723 6.2398 0.662507 6.06703C0.73229 5.89427 0.836158 5.73732 0.967912 5.60557C1.09967 5.47381 1.25661 5.36995 1.42938 5.30016C1.60214 5.23038 1.7872 5.19611 1.9735 5.1994C2.1598 5.20268 2.34352 5.24346 2.51372 5.3193C2.68392 5.39513 2.8371 5.50447 2.96413 5.64079L6.83801 9.51283L13.263 1.3266C13.2746 1.31236 13.287 1.29877 13.3 1.2859H13.2982Z'
+												fill='#14FF00'
+											/>
+										</svg>
+									</span>
+								);
+						  })
+						: ''}
+
+					<span style={{ marginLeft: '2rem' }}></span>
+					{props.active && parseInt(props.active.split('(')[0]) !== 0
+						? [
+								...Array(
+									parseInt(props.active.split('(')[0]) - props.completed_todo <= 0
+										? 0
+										: parseInt(props.active.split('(')[0]) - props.completed_todo > 0
+										? parseInt(props.active.split('(')[0]) - props.completed_todo
+										: 0
+								)
+						  ]?.map((count, key) => {
+								return (
+									<span style={{ marginRight: '5px', fontSize: '14px' }}>
+										<svg
+											width='7'
+											height='7'
+											viewBox='0 0 7 7'
+											fill='none'
+											xmlns='http://www.w3.org/2000/svg'
+											style={{ fontSize: '14px', transform: 'translateY(-40%)' }}
+										>
+											<circle cx='3.58691' cy='3.90332' r='3' fill='#666666' />
+										</svg>
+									</span>
+								);
+						  })
+						: ''}
 				</div>
 			</td>
-			<td style={{ transform: 'translateX(-8px)',fontSize: '14px',textAlign:"center",paddingLeft:'25px'}}>
+			<td
+				style={{
+					transform: 'translateX(-8px)',
+					fontSize: '14px',
+					textAlign: 'center',
+					paddingLeft: '25px'
+				}}
+			>
 				<a
 					href={`https://3.basecamp.com/4954106/reports/todos/assigned/${props.user_id}`}
 					style={{
-						color:
-							props?.tasks > 15 || props?.tasks <= 2 ? 'red' : 'white',
+						color: props?.tasks > 15 || props?.tasks <= 2 ? 'red' : 'white',
 						fontSize: '14px',
-						alignContent:'center',
-						
-						
+						alignContent: 'center'
 					}}
 					target='_blank'
 					rel='noreferrer'
 				>
-					{props.tasks>0?props.tasks:''}
+					{props.tasks > 0 ? props.tasks : ''}
 				</a>
 			</td>
-			<td style={{ textAlign: 'center', transform: 'translateX(-8px)'}}>
+			{/* <td style={{ textAlign: 'center', transform: 'translateX(-8px)'}}>
 				<p
 					style={{
 						color:
@@ -938,9 +1120,9 @@ const TableRow = props => {
 						return <div>{projectname}</div>;
 					})}</div>
 				</p>
-			</td>
+			</td> */}
 		</tr>
 	);
 };
 
-export default TeamWork;
+export default Playground;

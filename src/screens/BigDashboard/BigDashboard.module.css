@@ -11,7 +11,7 @@
 	display: grid;
 	font-family: Poppins;
 	line-height: 21px;
-	grid-template-columns: 1fr 1.3fr 2fr;
+	grid-template-columns: 1fr 2fr 1.3fr;
 	grid-template-rows: 1fr;
 	grid-template-areas: 'a b c';
 	overflow-y: hidden;
@@ -22,11 +22,11 @@
 	background: linear-gradient(175.2deg, #063437 0%, rgba(0, 0, 0, 0) 101.53%);
 }
 .project {
-	grid-area: b;
+	grid-area: c;
 	background: linear-gradient(175.2deg, #270a1f 0%, rgba(0, 0, 0, 0) 101.53%);
 }
 .teamWork {
-	grid-area: c;
+	grid-area: b;
 	background: linear-gradient(175.2deg, #0c0a27 0%, rgba(0, 0, 0, 0) 101.53%);
 }
 .activity,
@@ -35,6 +35,17 @@
 	width: 100%;
 	height: 100%;
 	overflow-y: scroll;
+}
+
+.maximized {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    overflow-y: auto;
+    background: 270a1f; /* or the background color you prefer */
 }
 
 .topStatisticsBar {
@@ -173,4 +184,38 @@ input[type='number'] {
 
 table {
 	border: none;
+}
+
+
+.statusTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.statusTable th, 
+.statusTable td {
+    border: 1px solid #ddd !important;
+    padding: 8px !important;
+    text-align: center !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 21px !important;
+}
+
+.statusTable th {
+    background-color: #333 !important;
+    color: white !important;
+}
+
+.slowdown {
+    color: yellow !important;
+}
+
+.absent {
+    color: red !important;
+}
+
+.idle {
+    color: yellow !important;
 }
